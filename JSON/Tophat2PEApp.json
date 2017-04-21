@@ -1,0 +1,658 @@
+{
+  "name": "TopHat2_PE",
+  "label": "TopHat2 PE",
+  "shortDescription": "TopHat for Paired End reads",
+  "longDescription": "TopHat is a fast splice junction mapper for RNA-Seq reads. It aligns RNA-Seq reads to mammalian-sized genomes using the ultra high-throughput short read aligner Bowtie, and then analyzes the mapping results to identify splice junctions between exons. It is important that paired reads file 1 and 2 are given in the very same order.",
+  "helpURI": "http://ccb.jhu.edu/software/tophat/index.shtml",
+  "datePublished": "",
+  "author":"Alice Minotto",
+  "version": "0.0.0",
+  "deploymentSystem": "cyverseUK-Storage2",
+  "deploymentPath": "/mnt/data/apps/tophat2",
+  "executionSystem": "cyverseUK-Batch2",
+  "executionType": "CLI",
+  "parallelism": "SERIAL",
+  "templatePath": "wrapper.sh",
+  "testPath": "test.sh",
+  "ontology": [ ],
+  "tags": [ "CyverseUK" ],
+  "inputs": [
+    {"id": "bowtie_index",
+    "value": {
+      "required": true,
+      "default": ""
+    },
+    "details": { "label": "Bowtie index",
+      "showArgument": false
+    },
+    "semantics": {
+      "maxCardinality": 1
+    }},
+    {"id": "pair1",
+    "value": {
+      "required": true,
+      "default": ""
+      },
+    "details": { "label": "Reads 1 of pairs",
+      "showArgument": false
+    },
+    "semantics": {
+      "maxCardinality": -1
+      }},
+      {"id": "pair2",
+        "value": {
+          "required": true,
+          "default": ""
+        },
+        "details": {
+          "label": "Reads 2 of pairs",
+          "showArgument": false
+        },
+        "semantics": {
+          "maxCardinality": -1
+        }
+      },
+      {"id": "quality_file",
+      "value": {
+        "required": false,
+        "default": ""
+        },
+      "details": { "label": "Quality file(s)",
+        "showArgument": false
+      },
+      "semantics": {
+        "maxCardinality": -1
+        }},
+        {"id": "GTF",
+        "value": {
+          "required": false,
+          "default": ""
+          },
+        "details": { "label": "GTF/GFF with known transcripts",
+          "description": "Supply TopHat with a set of gene model annotations and/or known transcripts, as a GTF 2.2 or GFF3 formatted file. If this option is provided, TopHat will first extract the transcript sequences and use Bowtie to align reads to this virtual transcriptome first. Only the reads that do not fully map to the transcriptome will then be mapped on the genome. The reads that did map on the transcriptome will be converted to genomic mappings (spliced as needed) and merged with the novel mappings and junctions in the final tophat output. Please note that the values in the first column of the provided GTF/GFF file (column which indicates the chromosome or contig on which the feature is located), must match the name of the reference sequence in the Bowtie index you are using with TopHat. You can get a list of the sequence names in a Bowtie index by typing: 'bowtie-inspect --names your_index' So before using a known annotation file with this option please make sure that the 1st column in the annotation file uses the exact same chromosome/contig names (case sensitive) as shown by the bowtie-inspect command above.",
+          "showArgument": false
+        }}
+    ],
+
+
+  "parameters": [
+    {"id": "read-mismatches",
+    "value": {
+      "type": "number",
+      "visible": true,
+      "validator": "^[0-9]*$",
+      "default": 2
+      },
+    "details": {
+      "label": "Read mismatches (2)",
+      "description": "Final read alignments having more than these many mismatches are discarded.",
+      "showArgument": true,
+      "argument": "--read-mismatches "
+      }},
+    {"id": "read-gap-length",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 2,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Read gap length (2)",
+        "description": "Final read alignments having more than these many total length of gaps are discarded.",
+        "showArgument": true,
+        "argument": "--read-gap-length "
+      }
+    },
+    {"id": "read-edit-dist",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 2,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Read edit distance (2)",
+        "description": "Final read alignments having more than these many edit distance are discarded.",
+        "showArgument": true,
+        "argument": "--read-edit-dist "
+      }
+    },
+    {"id": "read-realign-edit-dist",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Read realign edit distance",
+        "description": "default read-edit-dist + 1. Some of the reads spanning multiple exons may be mapped incorrectly as a contiguous alignment to the genome even though the correct alignment should be a spliced one - this can happen in the presence of processed pseudogenes that are rarely (if at all) transcribed or expressed. This option can direct TopHat to re-align reads for which the edit distance of an alignment obtained in a previous mapping step is above or equal to this option value. If you set this option to 0, TopHat will map every read in all the mapping steps (transcriptome if you provided gene annotations, genome, and finally splice variants detected by TopHat), reporting the best possible alignment found in any of these mapping steps. This may greatly increase the mapping accuracy at the expense of an increase in running time. The default value for this option is set such that TopHat will not try to realign reads already mapped in earlier steps.",
+        "showArgument": true,
+        "argument": "--read-realign-edit-dist "
+      }
+    },
+    {"id": "min-anchor",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 8,
+        "validator": "^([0-9]*)$"
+      },
+      "details": {
+        "label": "Min anchor",
+        "description": "The 'anchor length'. TopHat will report junctions spanned by reads with at least this many bases on each side of the junction. Note that individual spliced alignments may span a junction with fewer than this many bases on one side. However, every junction involved in spliced alignments is supported by at least one read with this many bases on each side. This must be at least 3.",
+        "showArgument": true,
+        "argument": "--min-anchor "
+      }
+    },
+    {"id": "splice-mismatches",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 0,
+        "validator": "^[0-2]$"
+      },
+      "details": {
+        "label": "Splice mismatches",
+        "description": "The maximum number of mismatches that may appear in the 'anchor' region of a spliced alignment.",
+        "showArgument": true,
+        "argument": "--splice-mismatches "
+      }
+    },
+    {"id": "min-intron-length",
+      "value": {
+        "type": "number",
+        "default": 50,
+        "validator": "^[0-9]*$",
+        "visible": true
+      },
+      "details": {
+        "label": "Minimum intron length",
+        "description": "The minimum intron length. TopHat will ignore donor/acceptor pairs closer than this many bases apart.",
+        "showArgument": true,
+        "argument": "--min-intron-length "
+      }
+    },
+    {"id": "max-intron-length",
+      "value": {
+        "type": "number",
+        "default": 500000,
+        "visible": true,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Maximum intron length",
+        "description": "When searching for junctions ab initio, TopHat will ignore donor/acceptor pairs farther than this many bases apart, except when such a pair is supported by a split segment alignment of a long read.",
+        "showArgument": true,
+        "argument": "--max-intron-length "
+      }
+    },
+    {"id": "max-multihits",
+      "value": {
+        "type": "number",
+        "default": 20,
+        "validator": "^[0-9]*$",
+        "visible": true
+      },
+      "details": {
+        "label": "Max multihits",
+        "description": "Instructs TopHat to allow up to this many alignments to the reference for a given read, and choose the alignments based on their alignment scores if there are more than this number. The default is 20 for read mapping. Unless you use --report-secondary-alignments, TopHat will report the alignments with the best alignment score. If there are more alignments with the same score than this number, TopHat will randomly report only this many alignments. In case of using --report-secondary-alignments, TopHat will try to report alignments up to this option value, and TopHat may randomly output some of the alignments with the same score to meet this number.",
+        "showArgument": true,
+        "argument": "--max-multihits "
+      }
+    },
+    {"id": "suppress-hits",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Suppress hits",
+        "showArgument": true,
+        "argument": "--suppress-hits "
+      }
+    },
+    {"id": "transcriptome-max-hits",
+      "value": {
+        "type": "number",
+        "default": 60,
+        "visible": true,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Transcriptome max hits",
+        "description": "Maximum number of mappings allowed for a read, when aligned to the transcriptome (any reads found with more then this number of mappings will be discarded).",
+        "showArgument": true,
+        "argument": "--transcriptome-max-hits "
+      }
+    },
+    {"id": "prefilter-multihits",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Prefilter multihits",
+        "description": "for -G/--GTF option, enable an initial bowtie search against the genome. When mapping reads on the transcriptome, some repetitive or low complexity reads that would be discarded in the context of the genome may appear to align to the transcript sequences and thus may end up reported as mapped to those genes only. This option directs TopHat to first align the reads to the whole genome in order to determine and exclude such multi-mapped reads (according to the value of the -g/--max-multihits option).",
+        "showArgument": true,
+        "argument": "--prefilter-multihits "
+      }
+    },
+    {"id": "max-insertion-length",
+      "value": {
+        "type": "number",
+        "default": 3,
+        "validator": "^[0-9]*$",
+        "visible": true
+      },
+      "details": {
+        "label": "Maximum insertion length",
+        "showArgument": true,
+        "argument": "--max-insertion-length "
+      }
+    },
+    {"id": "max-deletion-length",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "validator": "^[0-9]*$",
+        "default": 3
+      },
+      "details": {
+        "label": "Max deletion length",
+        "showArgument": true,
+        "argument": "--max-deletion-length "
+      }
+    },
+    {"id": "quality_type",
+      "value": {
+        "type": "enumeration",
+        "visible": true,
+        "enumValues": [
+          {"--solexa-quals ": "Solexa scale"},
+          {"--solexa1.3-quals ": "Solexa >= 1.3"},
+          {"--phred64-quals ": "Illumina GA pipeline version >=1.3"}
+        ]
+      },
+      "details": {
+        "label": "Quality",
+        "showArgument": false
+      }
+    },
+    {"id": "integer-quals",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Integer qualities",
+        "description": "Quality values are space-delimited integer values, this becomes default when you specify -C/--color.",
+        "showArgument": true,
+        "argument": "--integer-quals "
+      }
+    },
+    {"id": "color",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Colorspace reads",
+        "showArgument": true,
+        "argument": "--color "
+      }
+    },
+    {"id": "library-type",
+      "value": {
+        "type": "enumeration",
+        "visible": true,
+        "enumValues": [
+          "fr-unstranded",
+          "fr-firststrand",
+          "fr-secondstrand"
+        ]
+      },
+      "details": {
+        "label": "Library type",
+        "description": "The default is unstranded (fr-unstranded). If either fr-firststrand or fr-secondstrand is specified, every read alignment will have an XS attribute tag as explained below. ",
+        "showArgument": true,
+        "argument": "--library-type "
+      }
+    },
+    {"id": "transcriptome-only",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Transcriptome only",
+        "description": "Only align the reads to the transcriptome and report only those mappings as genomic mappings.",
+        "showArgument": true,
+        "argument": "--transcriptome-only "
+      }
+    }, ########
+    {"id": "window_masker_taxid",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+$"
+      },
+      "details": {
+        "label": "Enable WindowMasker",
+        "description": "filtering using a Taxonomic ID",
+        "showArgument": true,
+        "argument": "-window_masker_taxid "
+      }
+    },
+    {"id": "soft_masking",
+      "value": {
+        "type": "bool",
+        "visible": true,
+        "default": true
+      },
+      "details": {
+        "label": "Soft Masking",
+        "description": "Apply filtering locations as soft masks",
+        "showArgument": true,
+        "argument": "-soft_masking "
+      }
+    },
+    {"id": "lcase_masking",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Lower Case Masking",
+        "description": "Use lower case filtering in query and subject sequence(s)",
+        "showArgument": true,
+        "argument": "-lcase_masking "
+      }
+    },
+    {"id": "gilist",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "GI list",
+        "description": "Restrict search of database to list of GI's. Incompatible with:  negative_gilist, seqidlist,   subject, subject_loc",
+        "showArgument": true,
+        "argument": "-gilist "
+      }
+    },
+    {"id": "seqidlist",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SeqId list",
+        "description": "Restrict search of database to list of SeqId's. Incompatible with:  gilist, negative_gilist, subject, subject_loc",
+        "showArgument": true,
+        "argument": "-seqidlist "
+      }
+    },
+    {"id": "negative_gilist",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "Negative GI list",
+        "description": "Restrict search of database to everything except the listed GIs. Incompatible with:  gilist, seqidlist, subject, subject_loc",
+        "showArgument": true,
+        "argument": "-negative_gilist "
+      }
+    },
+    {"id": "db_soft_mask",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "DB soft mask",
+        "description": "Filtering algorithm ID to apply to the BLAST database as soft masking. Incompatible with:  db_hard_mask, subject, subject_loc",
+        "showArgument": true,
+        "argument": "-db_soft_mask "
+      }
+    },
+    {"id": "db_hard_mask",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "DB hard mask",
+        "description": "Filtering algorithm ID to apply to the BLAST database as hard masking. Incompatible with:  db_hard_mask, subject, subject_loc",
+        "showArgument": true,
+        "argument": "-db_hard_mask "
+      }
+    },
+    {"id": "perc_identity",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^(\\d{1,2}|(100))$"
+      },
+      "details": {
+        "label": "Percent identity",
+        "showArgument": true,
+        "argument": "-perc_identity "
+      }
+    },
+    {"id": "qcov_hsp_perc",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^(\\d{1,2}|(100))$"
+      },
+      "details": {
+        "label": "Percent query coverage per hsp",
+        "showArgument": true,
+        "argument": "-qcov_hsp_perc "
+      }
+    },
+    {"id": "max_hsps",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^([1-9]|\\d\\d+)$"
+      },
+      "details": {
+        "label": "Max HSPs",
+        "description": "Set maximum number of HSPs per subject sequence to save for each query",
+        "showArgument": true,
+        "argument": "-max_hsps "
+      }
+    },
+    {"id": "culling_limit",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+$"
+      },
+      "details": {
+        "label": "Culling limit",
+        "description": "If the query range of a hit is enveloped by that of at least this many higher-scoring hits, delete the hit. Incompatible with:  best_hit_overhang, best_hit_score_edge",
+        "showArgument": true,
+        "argument": "-culling_limit "
+      }
+    },
+    {"id": "best_hit_overhang",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^0\\.(0+[1-9]+|[1-4]+\\d*)$"
+      },
+      "details": {
+        "label": "Best Hit Overhang",
+        "description": "Best Hit algorithm overhang value (recommended value: 0.1). Incompatible with:  culling_limit",
+        "showArgument": true,
+        "argument": "-best_hit_overhang "
+      }
+    },
+    {"id": "best_hit_score_edge",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^0\\.(0+[1-9]+|[1-4]+\\d*)$"
+      },
+      "details": {
+        "label": "Best Hit Score Edge",
+        "description": "Best Hit algorithm score edge value (recommended value: 0.1). Incompatible with:  culling_limit",
+        "showArgument": true,
+        "argument": "-best_hit_score_edge "
+      }
+    },
+    {"id": "max_target_seqs",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "validator": "^[1-9]\\d*$",
+        "default": 500
+      },
+      "details": {
+        "label": "Best Hit Score Edge",
+        "description": "Maximum number of aligned sequences to keep. Not applicable for outfmt <= 4. Incompatible with:  num_descriptions, num_alignments",
+        "showArgument": true,
+        "argument": "-max_target_seqs "
+      }
+    },
+    {"id": "template_type",
+      "value": {
+        "type": "enumeration",
+        "visible": true,
+        "enumValues": [
+          "coding",
+          "coding_and_optimal",
+          "optimal"
+        ]
+      },
+      "details": {
+        "label": "Discontiguous MegaBLAST template type",
+        "description": "Requires:  template_length",
+        "showArgument": true,
+        "argument": "-template_type "
+      }
+    },
+    {"id": "template_length",
+      "value": {
+        "type": "enumeration",
+        "visible": true,
+        "enumValues": [
+          "16",
+          "18",
+          "21"
+        ]
+      },
+      "details": {
+        "label": "Discontiguous MegaBLAST template length",
+        "description": "Requires:  template_type",
+        "showArgument": true,
+        "argument": "-template_length "
+      }
+    },
+    {"id": "xdrop_ungap",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+(\\.\\d+)?$"
+      },
+      "details": {
+        "label": "X-dropoff value ungap",
+        "description": "X-dropoff value (in bits) for ungapped extensions",
+        "showArgument": true,
+        "argument": "-xdrop_ungap "
+      }
+    },
+    {"id": "xdrop_gap",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+(\\.\\d+)?$"
+      },
+      "details": {
+        "label": "X-dropoff value gap",
+        "description": "X-dropoff value (in bits) for preliminary gapped extensions",
+        "showArgument": true,
+        "argument": "-xdrop_gap "
+      }
+    },
+    {"id": "xdrop_gap_final",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+(\\.\\d+)?$"
+      },
+      "details": {
+        "label": "X-dropoff value final",
+        "description": "X-dropoff value (in bits) for final gapped alignment",
+        "showArgument": true,
+        "argument": "-xdrop_gap_final "
+      }
+    },
+    {"id": "min_raw_gapped_score",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+$"
+      },
+      "details": {
+        "label": "Minimum raw gap score",
+        "description": "Minimum raw gapped score to keep an alignment in the preliminary gapped and traceback stages",
+        "showArgument": true,
+        "argument": "-min_raw_gapped_score "
+      }
+    },
+    {"id": "ungapped",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Perform ungapped alignment only",
+        "showArgument": true,
+        "argument": "-ungapped "
+      }
+    },
+    {"id": "window_size",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+$"
+      },
+      "details": {
+        "label": "Window size",
+        "description": "Multiple hits window size, use 0 to specify 1-hit algorithm",
+        "showArgument": true,
+        "argument": "-window_size "
+      }
+    },
+    {"id": "off_diagonal_range",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "validator": "^\\d+$",
+        "default": 0
+      },
+      "details": {
+        "label": "Off diagonal range",
+        "description": "Number of off-diagonals to search for the 2nd hit, use 0 to turn off",
+        "showArgument": true,
+        "argument": "-off_diagonal_range "
+      }
+    },
+    {"id": "parse_deflines",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Parse deflines",
+        "description": "Should the query and subject defline(s) be parsed?",
+        "showArgument": true,
+        "argument": "-parse_deflines "
+      }
+    }
+]
+}
