@@ -329,168 +329,170 @@
         "showArgument": true,
         "argument": "--transcriptome-only "
       }
-    }, ########
-    {"id": "window_masker_taxid",
+    },
+    {"id": "mate-inner-dist",
       "value": {
-        "type": "string",
+        "type": "number",
         "visible": true,
-        "validator": "^\\d+$"
+        "default": 50,
+        "validator": "^[0-9]*$"
       },
       "details": {
-        "label": "Enable WindowMasker",
-        "description": "filtering using a Taxonomic ID",
+        "label": "Mate inner distance",
+        "description": "This is the expected (mean) inner distance between mate pairs. For, example, for paired end runs with fragments selected at 300bp, where each end is 50bp, you should set -r to be 200.",
         "showArgument": true,
-        "argument": "-window_masker_taxid "
+        "argument": "--mate-inner-dist "
       }
     },
-    {"id": "soft_masking",
+    {"id": "mate-std-dev",
       "value": {
-        "type": "bool",
+        "type": "number",
         "visible": true,
-        "default": true
+        "default": 20,
+        "validator": "^[0-9]*$"
       },
       "details": {
-        "label": "Soft Masking",
-        "description": "Apply filtering locations as soft masks",
+        "label": "Mate standard deviation",
+        "description": "The standard deviation for the distribution on inner distances between mate pairs.",
         "showArgument": true,
-        "argument": "-soft_masking "
+        "argument": "--mate-std-dev "
       }
     },
-    {"id": "lcase_masking",
+    {"id": "no-novel-juncs",
       "value": {
         "type": "flag",
         "visible": true
       },
       "details": {
-        "label": "Lower Case Masking",
-        "description": "Use lower case filtering in query and subject sequence(s)",
+        "label": "No novel junctions",
+        "description": "Only look for reads across junctions indicated in the supplied GFF or junctions file. (ignored without -G/-j)",
         "showArgument": true,
-        "argument": "-lcase_masking "
+        "argument": "--no-novel-juncs "
       }
     },
-    {"id": "gilist",
+    {"id": "no-novel-indels",
       "value": {
-        "type": "string",
+        "type": "flag",
         "visible": true
       },
       "details": {
-        "label": "GI list",
-        "description": "Restrict search of database to list of GI's. Incompatible with:  negative_gilist, seqidlist,   subject, subject_loc",
+        "label": "No novel indels",
+        "description": "Only look for reads across indels in the supplied indel file, or disable indel detection when no file has been provided.",
         "showArgument": true,
-        "argument": "-gilist "
+        "argument": "--no-novel-indels "
       }
     },
-    {"id": "seqidlist",
+    {"id": "no-gtf-juncs",
       "value": {
-        "type": "string",
+        "type": "flag",
         "visible": true
       },
       "details": {
-        "label": "SeqId list",
-        "description": "Restrict search of database to list of SeqId's. Incompatible with:  gilist, negative_gilist, subject, subject_loc",
+        "label": "No GTF junctions",
         "showArgument": true,
-        "argument": "-seqidlist "
+        "argument": "--no-gtf-juncs "
       }
     },
-    {"id": "negative_gilist",
+    {"id": "no-coverage-search",
       "value": {
-        "type": "string",
+        "type": "flag",
         "visible": true
       },
       "details": {
-        "label": "Negative GI list",
-        "description": "Restrict search of database to everything except the listed GIs. Incompatible with:  gilist, seqidlist, subject, subject_loc",
+        "label": "No coverage search",
+        "description": "Disables the coverage based search for junctions.",
         "showArgument": true,
-        "argument": "-negative_gilist "
+        "argument": "--no-coverage-search "
       }
     },
-    {"id": "db_soft_mask",
+    {"id": "coverage-search",
       "value": {
-        "type": "string",
+        "type": "flag",
         "visible": true
       },
       "details": {
-        "label": "DB soft mask",
-        "description": "Filtering algorithm ID to apply to the BLAST database as soft masking. Incompatible with:  db_hard_mask, subject, subject_loc",
+        "label": "Coverage search",
+        "description": "Enables the coverage based search for junctions. Use when coverage search is disabled by default (such as for reads 75bp or longer), for maximum sensitivity.",
         "showArgument": true,
-        "argument": "-db_soft_mask "
+        "argument": "--coverage-search "
       }
     },
-    {"id": "db_hard_mask",
+    {"id": "microexon-search",
       "value": {
-        "type": "string",
+        "type": "flag",
         "visible": true
       },
       "details": {
-        "label": "DB hard mask",
-        "description": "Filtering algorithm ID to apply to the BLAST database as hard masking. Incompatible with:  db_hard_mask, subject, subject_loc",
+        "label": "Microexon search",
+        "description": "With this option, the pipeline will attempt to find alignments incident to micro-exons. Works only for reads 50bp or longer.",
         "showArgument": true,
-        "argument": "-db_hard_mask "
+        "argument": "--microexon-search "
       }
     },
-    {"id": "perc_identity",
+    {"id": "report-secondary-alignments",
       "value": {
-        "type": "string",
-        "visible": true,
-        "validator": "^(\\d{1,2}|(100))$"
+        "type": "flag",
+        "visible": true
       },
       "details": {
-        "label": "Percent identity",
+        "label": "Report secondary alignments",
+        "description": "By default TopHat reports best or primary alignments based on alignment scores (AS). Use this option if you want to output additional or secondary alignments  (up to 20 alignments will be reported this way, this limit can be changed by using the -g/--max-multihits option above).",
         "showArgument": true,
-        "argument": "-perc_identity "
+        "argument": "--report-secondary-alignments "
       }
     },
-    {"id": "qcov_hsp_perc",
+    {"id": "no-discordant",
       "value": {
-        "type": "string",
-        "visible": true,
-        "validator": "^(\\d{1,2}|(100))$"
+        "type": "flag",
+        "visible": true
       },
       "details": {
-        "label": "Percent query coverage per hsp",
+        "label": "No discordant",
+        "description": "For paired reads, report only concordant mappings.",
         "showArgument": true,
-        "argument": "-qcov_hsp_perc "
+        "argument": "--no-discordant "
       }
     },
-    {"id": "max_hsps",
+    {"id": "no-mixed",
       "value": {
-        "type": "string",
-        "visible": true,
-        "validator": "^([1-9]|\\d\\d+)$"
+        "type": "flag",
+        "visible": true
       },
       "details": {
-        "label": "Max HSPs",
-        "description": "Set maximum number of HSPs per subject sequence to save for each query",
+        "label": "No mixed",
+        "description": "For paired reads, only report read alignments if both reads in a pair can be mapped (by default, if TopHat cannot find a concordant or discordant alignment for both reads in a pair, it will find and report alignments for each read separately; this option disables that behavior).",
         "showArgument": true,
-        "argument": "-max_hsps "
+        "argument": "--no-mixed "
       }
     },
-    {"id": "culling_limit",
+    {"id": "segment-mismatches",
       "value": {
-        "type": "string",
+        "type": "number",
         "visible": true,
-        "validator": "^\\d+$"
+        "default": 2,
+        "validator": "^[0-9]*$"
       },
       "details": {
-        "label": "Culling limit",
-        "description": "If the query range of a hit is enveloped by that of at least this many higher-scoring hits, delete the hit. Incompatible with:  best_hit_overhang, best_hit_score_edge",
+        "label": "Segment mismatches",
+        "description": "Read segments are mapped independently, allowing up to this many mismatches in each segment alignment.",
         "showArgument": true,
-        "argument": "-culling_limit "
+        "argument": "--segment-mismatches "
       }
     },
-    {"id": "best_hit_overhang",
+    {"id": "segment-length",
       "value": {
-        "type": "string",
+        "type": "number",
         "visible": true,
-        "validator": "^0\\.(0+[1-9]+|[1-4]+\\d*)$"
+        "default": 25,
+        "validator": "^[0-9]*$"
       },
       "details": {
-        "label": "Best Hit Overhang",
-        "description": "Best Hit algorithm overhang value (recommended value: 0.1). Incompatible with:  culling_limit",
+        "label": "Segment length",
+        "description": "Each read is cut up into segments, each at least this long. These segments are mapped independently.",
         "showArgument": true,
-        "argument": "-best_hit_overhang "
+        "argument": "--segment-length "
       }
-    },
+    }, #########
     {"id": "best_hit_score_edge",
       "value": {
         "type": "string",
