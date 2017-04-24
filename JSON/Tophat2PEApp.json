@@ -492,168 +492,428 @@
         "showArgument": true,
         "argument": "--segment-length "
       }
-    }, #########
-    {"id": "best_hit_score_edge",
-      "value": {
-        "type": "string",
-        "visible": true,
-        "validator": "^0\\.(0+[1-9]+|[1-4]+\\d*)$"
-      },
-      "details": {
-        "label": "Best Hit Score Edge",
-        "description": "Best Hit algorithm score edge value (recommended value: 0.1). Incompatible with:  culling_limit",
-        "showArgument": true,
-        "argument": "-best_hit_score_edge "
-      }
     },
-    {"id": "max_target_seqs",
+    {"id": "min-coverage-intron",
       "value": {
         "type": "number",
         "visible": true,
-        "validator": "^[1-9]\\d*$",
-        "default": 500
+        "default": 50,
+        "validator": "^[0-9]*$"
       },
       "details": {
-        "label": "Best Hit Score Edge",
-        "description": "Maximum number of aligned sequences to keep. Not applicable for outfmt <= 4. Incompatible with:  num_descriptions, num_alignments",
+        "label": "Minimum coverage intron",
+        "description": "The minimum intron length that may be found during coverage search.",
         "showArgument": true,
-        "argument": "-max_target_seqs "
+        "argument": "--min-coverage-intron "
       }
     },
-    {"id": "template_type",
+    {"id": "max-coverage-intron",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "validator": "^[0-9]*$",
+        "default": 20000
+      },
+      "details": {
+        "label": "Maximum coverage intron",
+        "description": "The maximum intron length that may be found during coverage search.",
+        "showArgument": true,
+        "argument": "--max-coverage-intron "
+      }
+    },
+    {"id": "min-segment-intron",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 50,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Minimum segment intron",
+        "description": "The minimum intron length that may be found during split-segment search.",
+        "showArgument": true,
+        "argument": "--min-segment-intron "
+      }
+    },
+    {"id": "max-segment-intron",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 500000,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Maximum segment intron",
+        "description": "The maximum intron length that may be found during split-segment search.",
+        "showArgument": true,
+        "argument": "--max-segment-intron "
+      }
+    },
+    {"id": "keep-fasta-order",
+      "value": {
+        "type": "flag",
+        "visible": true
+      },
+      "details": {
+        "label": "Keep FASTA order",
+        "description": "In order to sort alignments in the same order in the genome fasta file, the option can be used. But this option will make the output SAM/BAM file incompatible with those from the previous versions of TopHat (1.4.1 or lower).",
+        "showArgument": true,
+        "argument": "--keep-fasta-order "
+      }
+    },
+    {"id": "bowtie2-preset",
       "value": {
         "type": "enumeration",
         "visible": true,
         "enumValues": [
-          "coding",
-          "coding_and_optimal",
-          "optimal"
+          {"--b2-very-fast ": "very fast"},
+          {"--b2-fast ":"fast"},
+          {"--b2-sensitive ":"sensitive"},
+          {"--b2-very-sensitive ":"very sensitive"}
         ]
       },
       "details": {
-        "label": "Discontiguous MegaBLAST template type",
-        "description": "Requires:  template_length",
-        "showArgument": true,
-        "argument": "-template_type "
+        "label": "Bowtie2 preset",
+        "description": "corrisponding to Bowtie2 options",
+        "showArgument": false
       }
     },
-    {"id": "template_length",
-      "value": {
-        "type": "enumeration",
-        "visible": true,
-        "enumValues": [
-          "16",
-          "18",
-          "21"
-        ]
-      },
-      "details": {
-        "label": "Discontiguous MegaBLAST template length",
-        "description": "Requires:  template_type",
-        "showArgument": true,
-        "argument": "-template_length "
-      }
-    },
-    {"id": "xdrop_ungap",
+    {"id": "bowtie2-N",
       "value": {
         "type": "string",
         "visible": true,
-        "validator": "^\\d+(\\.\\d+)?$"
+        "validator": "^(1|0)$"
       },
       "details": {
-        "label": "X-dropoff value ungap",
-        "description": "X-dropoff value (in bits) for ungapped extensions",
+        "label": "Bowtie2 N",
+        "description": "max # mismatches in seed alignment; can be 0 or 1 (0)",
         "showArgument": true,
-        "argument": "-xdrop_ungap "
+        "argument": "--b2-N "
       }
     },
-    {"id": "xdrop_gap",
+    {"id": "bowtie2-L",
       "value": {
         "type": "string",
         "visible": true,
-        "validator": "^\\d+(\\.\\d+)?$"
+        "validator": "^([4-9]|[1-2][0-9]|3[0-1])$"
       },
       "details": {
-        "label": "X-dropoff value gap",
-        "description": "X-dropoff value (in bits) for preliminary gapped extensions",
+        "label": "Bowtie2 L",
+        "description": "length of seed substrings: default 20",
         "showArgument": true,
-        "argument": "-xdrop_gap "
+        "argument": "--b2-L "
       }
     },
-    {"id": "xdrop_gap_final",
+    {"id": "bowtie2-i",
       "value": {
         "type": "string",
         "visible": true,
-        "validator": "^\\d+(\\.\\d+)?$"
+        "validator": "^(L|C|S|G),-?\\d+(.\\d+)?,-?\\d+(.\\d+)?$"
       },
       "details": {
-        "label": "X-dropoff value final",
-        "description": "X-dropoff value (in bits) for final gapped alignment",
+        "label": "Bowtie2 i",
+        "description": "Interval between seed substrings w/r/t read len: default S,1,1.25",
         "showArgument": true,
-        "argument": "-xdrop_gap_final "
+        "argument": "--b2-i "
       }
     },
-    {"id": "min_raw_gapped_score",
+    {"id": "bowtie2-n-ceil",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^(L|C|S|G),-?\\d+(.\\d+)?,-?\\d+(.\\d+)?$"
+      },
+      "details": {
+        "label": "Bowtie2 n-ceil",
+        "description": "Func for max # non-A/C/G/Ts permitted in aln: default L,0,0.15",
+        "showArgument": true,
+        "argument": "--b2-n-ceil "
+      }
+    },
+    {"id": "bowtie2-gbar",
       "value": {
         "type": "string",
         "visible": true,
         "validator": "^\\d+$"
       },
       "details": {
-        "label": "Minimum raw gap score",
-        "description": "Minimum raw gapped score to keep an alignment in the preliminary gapped and traceback stages",
+        "label": "Bowtie2 gbar",
+        "description": "disallow gaps within <int> nucs of read extremes (4)",
         "showArgument": true,
-        "argument": "-min_raw_gapped_score "
+        "argument": "--b2-gbar "
       }
     },
-    {"id": "ungapped",
+    {"id": "bowtie2-mp",
       "value": {
-        "type": "flag",
-        "visible": true
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+,\\d+$"
       },
       "details": {
-        "label": "Perform ungapped alignment only",
+        "label": "Bowtie2 mp",
+        "description": "Max mismatch penalty: default 6,2",
         "showArgument": true,
-        "argument": "-ungapped "
+        "argument": "--b2-mp "
       }
     },
-    {"id": "window_size",
+    {"id": "bowtie2-np",
       "value": {
         "type": "string",
         "visible": true,
         "validator": "^\\d+$"
       },
       "details": {
-        "label": "Window size",
-        "description": "Multiple hits window size, use 0 to specify 1-hit algorithm",
+        "label": "Bowtie2 np",
+        "description": "Penalty for non-A/C/G/T: default 1",
         "showArgument": true,
-        "argument": "-window_size "
+        "argument": "--b2-np "
       }
     },
-    {"id": "off_diagonal_range",
+    {"id": "bowtie2-rdg",
       "value": {
-        "type": "number",
+        "type": "string",
         "visible": true,
-        "validator": "^\\d+$",
-        "default": 0
+        "validator": "^\\d+,\\d+$"
       },
       "details": {
-        "label": "Off diagonal range",
-        "description": "Number of off-diagonals to search for the 2nd hit, use 0 to turn off",
+        "label": "Bowtie2 rdg",
+        "description": "Read gap open, extend penalties: default 5,3",
         "showArgument": true,
-        "argument": "-off_diagonal_range "
+        "argument": "--b2-rdg "
       }
     },
-    {"id": "parse_deflines",
+    {"id": "bowtie2-rfg",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+,\\d+$"
+      },
+      "details": {
+        "label": "Bowtie2 rfg",
+        "description": "Reference gap open, extend penalties: default 5,3",
+        "showArgument": true,
+        "argument": "--b2-rfg "
+      }
+    },
+    {"id": "bowtie2-score-min",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^((L|C|S|G),-?\\d+(.\\d+)?,-?\\d+(.\\d+)?)$"
+      },
+      "details": {
+        "label": "Bowtie2 score min",
+        "description": "Min accettable alignment score w/r/t read length: default L,-0.6,-0.6",
+        "showArgument": true,
+        "argument": "--b2-score-min "
+      }
+    },
+    {"id": "bowtie2-D",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+$"
+      },
+      "details": {
+        "label": "Bowtie2 D",
+        "description": "Give up extending after <int> failed in a row (15)",
+        "showArgument": true,
+        "argument": "--b2-D "
+      }
+    },
+    {"id": "bowtie2-R",
+      "value": {
+        "type": "string",
+        "visible": true,
+        "validator": "^\\d+$"
+      },
+      "details": {
+        "label": "Bowtie2 R",
+        "description": "For reads with repetitive seeds try <int> sets of seeds (2)",
+        "showArgument": true,
+        "argument": "--b2-R "
+      }
+    },
+    {"id": "fusion-search",
       "value": {
         "type": "flag",
         "visible": true
       },
       "details": {
-        "label": "Parse deflines",
-        "description": "Should the query and subject defline(s) be parsed?",
+        "label": "Fusion search",
+        "description": "Turn on fusion mapping",
         "showArgument": true,
-        "argument": "-parse_deflines "
+        "argument": "--fusion-search "
+      }
+    },
+    {"id": "fusion-anchor-length",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 20,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Fusion anchor length",
+        "description": "A 'supporting' read must map to both sides of a fusion by at least these many bases.",
+        "showArgument": true,
+        "argument": "--fusion-anchor-length "
+      }
+    },
+    {"id": "fusion-min-dist",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 10000000,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Fusion minimum distance",
+        "description": "For intra-chromosomal fusions, TopHat-Fusion tries to find fusions separated by at least this distance.",
+        "showArgument": true,
+        "argument": "--fusion-min-dist "
+      }
+    },
+    {"id": "fusion-read-mismatches",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 2,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Fusion read mismatches",
+        "description": "Reads support fusions if they map across fusion with at most these many mismatches.",
+        "showArgument": true,
+        "argument": "--fusion-read-mismatches "
+      }
+    },
+    {"id": "fusion-multireads",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 2,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Fusion multireads",
+        "description": "Reads that map to more than these many places will be ignored. It may be possible that a fusion is supported by reads (or pairs) that map to multiple places.",
+        "showArgument": true,
+        "argument": "--fusion-multireads "
+      }
+    },
+    {"id": "fusion-multipairs",
+      "value": {
+        "type": "number",
+        "visible": true,
+        "default": 2,
+        "validator": "^[0-9]*$"
+      },
+      "details": {
+        "label": "Fusion multipairs",
+        "description": "Pairs that map to more than these many places will be ignored.",
+        "showArgument": true,
+        "argument": "--fusion-multipairs "
+      }
+    },
+    {"id": "fusion-ignore-chromosomes",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "Fusion ignore chromosomes",
+        "description": "Ignore some chromosomes such as chrM when detecting fusion break points. Please check the correct names for chromosomes, that is, mitochondrial DNA is represented as chrM or M depending on the annotation you use. (comma separated list)",
+        "showArgument": true,
+        "argument": "--fusion-ignore-chromosomes "
+      }
+    },
+    {"id": "rg-id",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SAM headers: read group ID",
+        "showArgument": true,
+        "argument": "--rg-id "
+      }
+    },
+    {"id": "rg-sample",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SAM headers: sample ID",
+        "showArgument": true,
+        "argument": "--rg-sample "
+      }
+    },
+    {"id": "rg-library",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SAM headers: library ID",
+        "showArgument": true,
+        "argument": "--rg-library "
+      }
+    },
+    {"id": "rg-description",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SAM headers: descriptive string, no tabs allowed",
+        "showArgument": true,
+        "argument": "--rg-description "
+      }
+    },
+    {"id": "rg-platform-unit",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SAM headers: platform unit, e.g. Illumina lane ID",
+        "showArgument": true,
+        "argument": "--rg-platform-unit "
+      }
+    },
+    {"id": "rg-center",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SAM headers: sequencing center name",
+        "showArgument": true,
+        "argument": "--rg-center "
+      }
+    },
+    {"id": "rg-date",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SAM headers: ISO 8601 date of the sequencing run",
+        "showArgument": true,
+        "argument": "--rg-date "
+      }
+    },
+    {"id": "rg-platform",
+      "value": {
+        "type": "string",
+        "visible": true
+      },
+      "details": {
+        "label": "SAM headers: sequencing platform descriptor",
+        "showArgument": true,
+        "argument": "--rg-platform "
       }
     }
 ]
