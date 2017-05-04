@@ -22,11 +22,13 @@
       "required": true,
       "default": ""
     },
-    "details": { "label": "Bowtie index",
-      "showArgument": false
+    "details": {
+      "label": "Bowtie index",
+      "showArgument": false,
+      "description": "please provide an archive or all the files composing the index (.fa is optional)"
     },
     "semantics": {
-      "maxCardinality": 1
+      "maxCardinality": -1
     }},
     {"id": "pair1",
     "value": {
@@ -41,7 +43,7 @@
       }},
       {"id": "pair2",
         "value": {
-          "required": false,
+          "required": true,
           "default": ""
         },
         "details": {
