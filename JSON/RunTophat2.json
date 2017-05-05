@@ -1,0 +1,18 @@
+{
+  "name" : "TopHat2_PE",
+  "appId" : "TopHat2_PE-0.0.0",
+  "archive" : false,
+  "inputs": {
+    "bowtie_index" : [
+    "http://de.cyverse.org/dl/d/5F64579E-8F83-492B-A631-09461371828C/b2_index.1.bt2",
+  "http://de.cyverse.org/dl/d/D76D2A95-BEA7-42DE-BD39-1A4192AC5C7D/b2_index.2.bt2",
+"http://de.cyverse.org/dl/d/66EFB446-4709-45D6-915F-FF62FC7C39EB/b2_index.3.bt2",
+"http://de.cyverse.org/dl/d/E645EE27-3F27-4643-BFED-22011BF0637E/b2_index.4.bt2",
+"http://de.cyverse.org/dl/d/E5319CD0-5F7C-43FA-9C5A-EFE5E972732C/b2_index.rev.1.bt2",
+"http://de.cyverse.org/dl/d/8A1BB40B-20BD-4B15-9044-8E5D64EF25F2/b2_index.rev.2.bt2" ],
+"pair1": [ "http://de.cyverse.org/dl/d/1B1C7DD0-7DE7-45E8-B353-B2E6E69A7B1E/1.fastq" ],
+"pair2": [ "http://de.cyverse.org/dl/d/B10F565C-78D2-462D-9105-2E71A09C1810/2.fastq"]
+  },
+  "parameters" : {
+  }
+}
