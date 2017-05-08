@@ -130,7 +130,7 @@ if [ -n "${GTF}" ]
     fi
 fi
 
-CMDLINEARGS+="--num-threads 16 --output-dir output ${BASEINDEX} ${PAIR1CMD} ${PAIR2CMD} "
+CMDLINEARGS+="--num-threads 16 --output-dir output ${BASEINDEX} ${PAIR1CMD} ${PAIR2CMD} ${QUALITY_FILE1CMD} ${QUALITY_FILE2CMD} "
 
 echo ${CMDLINEARGS}
 chmod +x launch.sh
