@@ -14,7 +14,13 @@
   "parallelism": "SERIAL",
   "templatePath": "wrapper.sh",
   "testPath": "test.sh",
-  "ontology": [ ],
+  "ontology": [
+    "http://edamontology.org/operation_3199",
+    "http://edamontology.org/operation_0314",
+    "http://edamontology.org/operation_0433",
+    "http://edamontology.org/topic_3320",
+    "http://edamontology.org/topic_3308",
+    "http://edamontology.org/topic_3512"],
   "tags": [ "CyverseUK" ],
   "inputs": [
     {"id": "bowtie_index",
