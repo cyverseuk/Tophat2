@@ -57,11 +57,11 @@ if file --mime-type "./${BOWTIEINDEXU}" | grep -q gzip$
         BASEINDEX=$(basename "${temp}")
         BASEINDEX="${BASEINDEX%%.*}"
       else
-        if [[ ! "${BOWTIEINDEXU}" =~ .*[^\.].*\.1\.bt2.* ]]
+        if [ "${norev1#*\.1\.bt2}" == "${norev1}" ]
           then
             >&2 echo 1.bt2 is missing
         fi
-        if [[ ! "${BOWTIEINDEXU}" =~ .*[^\.].*\.2\.bt2.* ]]
+        if [ "${norev2#*\.2\.bt2}" == "${norev2}" ]
           then
             >&2 echo 2.bt2 is missing
         fi
