@@ -42,18 +42,20 @@ if file --mime-type "./${BOWTIEINDEXU}" | grep -q gzip$
     BASEINDEX=$(basename "${bowtie_index}")
     BASEINDEX="${BASEINDEX%%.*}"
   else
-    if [ "${BOWTIEINDEXU#*\.1\.bt2}" != "${BOWTIEINDEXU}" ] && [ "${BOWTIEINDEXU#*\.2\.bt2}" != "${BOWTIEINDEXU}" ] && [ "${BOWTIEINDEXU#*\.3\.bt2}" != "${BOWTIEINDEXU}" ] && [ "${BOWTIEINDEXU#*\.4\.bt2}" != "${BOWTIEINDEXU}" ] && [ "${BOWTIEINDEXU#*\.rev\.1\.bt2}" != "${BOWTIEINDEXU}" ] && [ "${BOWTIEINDEXU#*\.rev\.2\.bt2}" != "${BOWTIEINDEXU}" ]
+    norev1=`echo "${BOWTIEINDEXU}" | sed -e 's/.rev.1.bt2//g'`
+    norev2=`echo "${BOWTIEINDEXU}" | sed -e 's/.rev.2.bt2//g'`
+    if [ "${norev1#*\.1\.bt2}" != "${norev1}" ] && [ "${norev2#*\.2\.bt2}" != "${norev2}" ] && [ "${BOWTIEINDEXU#*\.3\.bt2}" != "${BOWTIEINDEXU}" ] && [ "${BOWTIEINDEXU#*\.4\.bt2}" != "${BOWTIEINDEXU}" ] && [ "${BOWTIEINDEXU#*\.rev\.1\.bt2}" != "${BOWTIEINDEXU}" ] && [ "${BOWTIEINDEXU#*\.rev\.2\.bt2}" != "${BOWTIEINDEXU}" ]
       then
         echo #all files are provided. do nothing
         temp=(${bowtie_index})
         BASEINDEX=$(basename "${temp}")
         BASEINDEX="${BASEINDEX%%.*}"
       else
-        if [ "${BOWTIEINDEXU#*\.1\.bt2}" == "${BOWTIEINDEXU}" ]
+        if [ "${norev1#*\.1\.bt2}" == "${norev1}" ]
           then
             >&2 echo 1.bt2 is missing
         fi
-        if [ "${BOWTIEINDEXU#*\.2\.bt2}" == "${BOWTIEINDEXU}" ]
+        if [ "${norev2#*\.2\.bt2}" == "${norev2}" ]
           then
             >&2 echo 2.bt2 is missing
         fi
